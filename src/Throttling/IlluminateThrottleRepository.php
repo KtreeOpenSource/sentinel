@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,17 +11,16 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Throttling;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Cartalyst\Sentinel\Users\UserInterface;
 use Cartalyst\Support\Traits\RepositoryTrait;
 
@@ -46,7 +45,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
      * If an integer is set, it represents the number of attempts
      * before throttling locks out in the current interval.
      *
-     * @var array|int
+     * @var int|array
      */
     protected $globalThresholds = [
         10 => 1,
@@ -74,7 +73,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Works identical to global thresholds, except specific to an IP address.
      *
-     * @var array|int
+     * @var int|array
      */
     protected $ipThresholds = 5;
 
@@ -95,7 +94,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Works identical to global and IP address thresholds, regarding a user.
      *
-     * @var array|int
+     * @var int|array
      */
     protected $userThresholds = 5;
 
@@ -109,14 +108,13 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Create a new Illuminate throttle repository.
      *
-     * @param string    $model
-     * @param int       $globalInterval
-     * @param array|int $globalThresholds
-     * @param int       $ipInterval
-     * @param array|int $ipThresholds
-     * @param int       $userInterval
-     * @param array|int $userThresholds
-     *
+     * @param  string  $model
+     * @param  int  $globalInterval
+     * @param  int|array  $globalThresholds
+     * @param  int  $ipInterval
+     * @param  int|array  $ipThresholds
+     * @param  int  $userInterval
+     * @param  int|array  $userThresholds
      * @return void
      */
     public function __construct(
@@ -156,7 +154,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function globalDelay()
     {
@@ -164,7 +162,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function ipDelay($ipAddress)
     {
@@ -172,7 +170,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function userDelay(UserInterface $user)
     {
@@ -180,7 +178,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function log($ipAddress = null, UserInterface $user = null)
     {
@@ -189,9 +187,6 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
             'type' => 'global',
         ]);
         $global->save();
-
-        // Reset global throttles cache
-        $this->globalThrottles = null;
 
         if ($ipAddress !== null) {
             $ipAddressThrottle = $this->createModel();
@@ -225,8 +220,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Sets the global interval.
      *
-     * @param int $globalInterval
-     *
+     * @param  int  $globalInterval
      * @return void
      */
     public function setGlobalInterval($globalInterval)
@@ -237,7 +231,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Returns the global thresholds.
      *
-     * @return array|int
+     * @return int|array
      */
     public function getGlobalThresholds()
     {
@@ -247,8 +241,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Sets the global thresholds.
      *
-     * @param array|int $globalThresholds
-     *
+     * @param  int|array  $globalThresholds
      * @return void
      */
     public function setGlobalThresholds($globalThresholds)
@@ -269,8 +262,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Sets the IP address interval.
      *
-     * @param int $ipInterval
-     *
+     * @param  int  $ipInterval
      * @return void
      */
     public function setIpInterval($ipInterval)
@@ -281,7 +273,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Returns the IP address thresholds.
      *
-     * @return array|int
+     * @return int|array
      */
     public function getIpThresholds()
     {
@@ -291,8 +283,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Sets the IP address thresholds.
      *
-     * @param array|int $ipThresholds
-     *
+     * @param  int|array  $ipThresholds
      * @return void
      */
     public function setIpThresholds($ipThresholds)
@@ -313,8 +304,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Sets the user interval.
      *
-     * @param int $userInterval
-     *
+     * @param  int  $userInterval
      * @return void
      */
     public function setUserInterval($userInterval)
@@ -325,7 +315,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Returns the user thresholds.
      *
-     * @return array|int
+     * @return int|array
      */
     public function getUserThresholds()
     {
@@ -335,8 +325,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Sets the user thresholds.
      *
-     * @param array|int $userThresholds
-     *
+     * @param  int|array  $userThresholds
      * @return void
      */
     public function setUserThresholds($userThresholds)
@@ -347,17 +336,14 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Returns a delay for the given type.
      *
-     * @param string $type
-     * @param mixed  $argument
-     *
+     * @param  string  $type
+     * @param  mixed  $argument
      * @return int
      */
     protected function delay($type, $argument = null)
     {
         // Based on the given type, we will generate method and property names
-        $typeStudly = Str::studly($type);
-
-        $method = 'get'.$typeStudly.'Throttles';
+        $method = 'get'.studly_case($type).'Throttles';
 
         $thresholds = $type.'Thresholds';
 
@@ -367,20 +353,20 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
             return 0;
         }
 
-        if (is_array($this->{$thresholds})) {
+        if (is_array($this->$thresholds)) {
             // Great, now we compare our delay against the most recent attempt
             $last = $throttles->last();
 
-            foreach (array_reverse($this->{$thresholds}, true) as $attempts => $delay) {
+            foreach (array_reverse($this->$thresholds, true) as $attempts => $delay) {
                 if ($throttles->count() <= $attempts) {
                     continue;
                 }
 
-                if ($last->created_at->diffInSeconds() < $delay) {
+                if ($last->createdAt->diffInSeconds() < $delay) {
                     return $this->secondsToFree($last, $delay);
                 }
             }
-        } elseif ($throttles->count() >= $this->{$thresholds}) {
+        } elseif ($throttles->count() > $this->$thresholds) {
             $interval = $type.'Interval';
 
             $first = $throttles->first();
@@ -413,22 +399,19 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     protected function loadGlobalThrottles()
     {
         $interval = Carbon::now()
-            ->subSeconds($this->globalInterval)
-        ;
+            ->subSeconds($this->globalInterval);
 
         return $this->createModel()
             ->newQuery()
             ->where('type', 'global')
-            ->where('created_at', '>', $interval)
-            ->get()
-        ;
+            ->where('createdAt', '>', $interval)
+            ->get();
     }
 
     /**
      * Returns the IP address throttles collection.
      *
-     * @param string $ipAddress
-     *
+     * @param  string  $ipAddress
      * @return \Illuminate\Database\Eloquent\Collection
      */
     protected function getIpThrottles($ipAddress)
@@ -443,31 +426,27 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Loads and returns the IP address throttles collection.
      *
-     * @param string $ipAddress
-     *
+     * @param  string  $ipAddress
      * @return \Illuminate\Database\Eloquent\Collection
      */
     protected function loadIpThrottles($ipAddress)
     {
         $interval = Carbon::now()
-            ->subSeconds($this->ipInterval)
-        ;
+            ->subSeconds($this->ipInterval);
 
         return $this
             ->createModel()
             ->newQuery()
             ->where('type', 'ip')
             ->where('ip', $ipAddress)
-            ->where('created_at', '>', $interval)
-            ->get()
-        ;
+            ->where('createdAt', '>', $interval)
+            ->get();
     }
 
     /**
      * Returns the user throttles collection.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
      * @return \Illuminate\Database\Eloquent\Collection
      */
     protected function getUserThrottles(UserInterface $user)
@@ -484,37 +463,33 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
     /**
      * Loads and returns the user throttles collection.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
      * @return \Illuminate\Database\Eloquent\Collection
      */
     protected function loadUserThrottles(UserInterface $user)
     {
         $interval = Carbon::now()
-            ->subSeconds($this->userInterval)
-        ;
+            ->subSeconds($this->userInterval);
 
         return $this
             ->createModel()
             ->newQuery()
             ->where('type', 'user')
             ->where('user_id', $user->getUserId())
-            ->where('created_at', '>', $interval)
-            ->get()
-        ;
+            ->where('createdAt', '>', $interval)
+            ->get();
     }
 
     /**
      * Returns the seconds to free based on the given throttle and
      * the presented delay in seconds, by comparing it to now.
      *
-     * @param \Cartalyst\Sentinel\Throttling\EloquentThrottle $throttle
-     * @param int                                             $interval
-     *
+     * @param  \Cartalyst\Sentinel\Throttling\EloquentThrottle  $throttle
+     * @param  int  $interval
      * @return int
      */
     protected function secondsToFree(EloquentThrottle $throttle, $interval)
     {
-        return $throttle->created_at->addSeconds($interval)->diffInSeconds();
+        return $throttle->createdAt->addSeconds($interval)->diffInSeconds();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,11 +11,11 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Checkpoints;
@@ -28,23 +28,23 @@ class ThrottlingException extends RuntimeException
     /**
      * The delay, in seconds.
      *
-     * @var int
+     * @var string
      */
-    protected $delay = 0;
+    protected $delay;
 
     /**
      * The throttling type which caused the exception.
      *
      * @var string
      */
-    protected $type = '';
+    protected $type;
 
     /**
      * Returns the delay.
      *
      * @return int
      */
-    public function getDelay(): int
+    public function getDelay()
     {
         return $this->delay;
     }
@@ -52,15 +52,12 @@ class ThrottlingException extends RuntimeException
     /**
      * Sets the delay.
      *
-     * @param int $delay
-     *
-     * @return $this
+     * @param  int  $delay
+     * @return void
      */
-    public function setDelay(int $delay): self
+    public function setDelay($delay)
     {
         $this->delay = $delay;
-
-        return $this;
     }
 
     /**
@@ -68,7 +65,7 @@ class ThrottlingException extends RuntimeException
      *
      * @return string
      */
-    public function getType(): string
+    public function getType()
     {
         return $this->type;
     }
@@ -76,15 +73,12 @@ class ThrottlingException extends RuntimeException
     /**
      * Sets the type.
      *
-     * @param string $type
-     *
-     * @return $this
+     * @param  string  $type
+     * @return void
      */
-    public function setType(string $type): self
+    public function setType($type)
     {
         $this->type = $type;
-
-        return $this;
     }
 
     /**
@@ -92,7 +86,7 @@ class ThrottlingException extends RuntimeException
      *
      * @return \Carbon\Carbon
      */
-    public function getFree(): Carbon
+    public function getFree()
     {
         return Carbon::now()->addSeconds($this->delay);
     }

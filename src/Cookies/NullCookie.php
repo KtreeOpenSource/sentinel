@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,11 +11,11 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.17
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Cookies;
@@ -25,11 +25,10 @@ class NullCookie implements CookieInterface
     /**
      * Put a value in the Sentinel cookie (to be stored until it's cleared).
      *
-     * @param mixed $value
-     *
+     * @param  mixed $value
      * @return void
      */
-    public function put($value): void
+    public function put($value)
     {
     }
 
@@ -48,7 +47,7 @@ class NullCookie implements CookieInterface
      *
      * @return void
      */
-    public function forget(): void
+    public function forget()
     {
     }
 }

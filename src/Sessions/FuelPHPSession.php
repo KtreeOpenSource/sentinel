@@ -20,16 +20,16 @@
 
 namespace Cartalyst\Sentinel\Sessions;
 
-use Illuminate\Session\Store as SessionStore;
+use Fuel\Core\Session_Driver as Session;
 
-class IlluminateSession implements SessionInterface
+class FuelPHPSession implements SessionInterface
 {
     /**
-     * The session store object.
+     * The FuelPHP session driver.
      *
-     * @var \Illuminate\Session\Store
+     * @var \Fuel\Core\Session_Driver
      */
-    protected $session;
+    protected $store;
 
     /**
      * The session key.
@@ -39,15 +39,15 @@ class IlluminateSession implements SessionInterface
     protected $key = 'cartalyst_sentinel';
 
     /**
-     * Create a new Illuminate Session driver.
+     * Create a new FuelPHP Session driver.
      *
-     * @param  \Illuminate\Session\Store  $session
+     * @param  \Fuel\Core\Session_Driver  $store
      * @param  string  $key
      * @return void
      */
-    public function __construct(SessionStore $session, $key = null)
+    public function __construct(Session $store, $key = null)
     {
-        $this->session = $session;
+        $this->store = $store;
 
         if (isset($key)) {
             $this->key = $key;
@@ -59,7 +59,7 @@ class IlluminateSession implements SessionInterface
      */
     public function put($value)
     {
-        $this->session->put($this->key, $value);
+        $this->store->set($this->key, $value);
     }
 
     /**
@@ -67,7 +67,7 @@ class IlluminateSession implements SessionInterface
      */
     public function get()
     {
-        return $this->session->get($this->key);
+        return $this->store->get($this->key);
     }
 
     /**
@@ -75,6 +75,6 @@ class IlluminateSession implements SessionInterface
      */
     public function forget()
     {
-        $this->session->forget($this->key);
+        $this->store->delete($this->key);
     }
 }

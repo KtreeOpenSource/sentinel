@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,11 +11,11 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Activations;
@@ -27,64 +27,49 @@ interface ActivationRepositoryInterface
     /**
      * Create a new activation record and code.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
      * @return \Cartalyst\Sentinel\Activations\ActivationInterface
      */
-    public function create(UserInterface $user): ActivationInterface;
-
-    /**
-     * Gets the activation for the given user.
-     *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     * @param string|null                             $code
-     *
-     * @return \Cartalyst\Sentinel\Activations\ActivationInterface|null
-     */
-    public function get(UserInterface $user, string $code = null): ?ActivationInterface;
+    public function create(UserInterface $user);
 
     /**
      * Checks if a valid activation for the given user exists.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     * @param string|null                             $code
-     *
-     * @return bool
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @param  string  $code
+     * @return \Cartalyst\Sentinel\Activations\ActivationInterface|bool
      */
-    public function exists(UserInterface $user, string $code = null): bool;
+    public function exists(UserInterface $user, $code = null);
 
     /**
      * Completes the activation for the given user.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     * @param string                                  $code
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @param  string  $code
      * @return bool
      */
-    public function complete(UserInterface $user, string $code): bool;
+    public function complete(UserInterface $user, $code);
 
     /**
      * Checks if a valid activation has been completed.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     *
-     * @return bool
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @return \Cartalyst\Sentinel\Activations\ActivationInterface|bool
      */
-    public function completed(UserInterface $user): bool;
+    public function completed(UserInterface $user);
 
     /**
      * Remove an existing activation (deactivate).
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
      * @return bool|null
      */
-    public function remove(UserInterface $user): ?bool;
+    public function remove(UserInterface $user);
 
     /**
      * Remove expired activation codes.
      *
-     * @return bool
+     * @return int
      */
-    public function removeExpired(): bool;
+    public function removeExpired();
 }

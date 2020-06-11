@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,84 +11,141 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Users;
 
-use Closure;
 use Carbon\Carbon;
-use InvalidArgumentException;
-use Cartalyst\Support\Traits\EventTrait;
-use Illuminate\Contracts\Events\Dispatcher;
-use Cartalyst\Support\Traits\RepositoryTrait;
 use Cartalyst\Sentinel\Hashing\HasherInterface;
+use Cartalyst\Support\Traits\EventTrait;
+use Cartalyst\Support\Traits\RepositoryTrait;
+use Closure;
+use Illuminate\Contracts\Events\Dispatcher;
+use InvalidArgumentException;
 
 class IlluminateUserRepository implements UserRepositoryInterface
 {
     use EventTrait, RepositoryTrait;
 
     /**
-     * The Hasher instance.
+     * The hasher instance.
      *
      * @var \Cartalyst\Sentinel\Hashing\HasherInterface
      */
     protected $hasher;
 
     /**
-     * The User model FQCN.
+     * The Eloquent user model name.
      *
      * @var string
      */
-    protected $model = EloquentUser::class;
+    protected $model = 'Cartalyst\Sentinel\Users\EloquentUser';
 
     /**
-     * Constructor.
+     * Create a new Illuminate user repository.
      *
-     * @param \Cartalyst\Sentinel\Hashing\HasherInterface $hasher
-     * @param \Illuminate\Contracts\Events\Dispatcher     $dispatcher
-     * @param string|null                                 $model
-     *
+     * @param  \Cartalyst\Sentinel\Hashing\HasherInterface  $hasher
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
+     * @param  string  $model
      * @return void
      */
-    public function __construct(HasherInterface $hasher, Dispatcher $dispatcher = null, string $model = null)
-    {
+    public function __construct(
+        HasherInterface $hasher,
+        Dispatcher $dispatcher = null,
+        $model = null
+    ) {
         $this->hasher = $hasher;
 
         $this->dispatcher = $dispatcher;
 
-        $this->model = $model;
+        if (isset($model)) {
+            $this->model = $model;
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function findById(int $id): ?UserInterface
+    public function findById($id)
     {
-        return $this->createModel()->newQuery()->find($id);
+        return $this
+            ->createModel()
+            ->newQuery()
+            ->find($id);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function findByCredentials(array $credentials): ?UserInterface
-    {
+    public function findByCredentials(array $credentials)
+    { /*$credentials = [
+        'email' => $request->email,
+        'password' => $request->password,
+    ];*/
+
+    /*
+    $email= $request->email;
+    $password = $request->password;
+    */
+/*
+    $client_id=config('asgard.user.config.passport_client_id');
+        $client_secret=config('asgard.user.config.client_secret');
+        //$remember = (bool) $request->get('remember_me', false);
+        $http = new \GuzzleHttp\Client;
+
+        $response = $http->post('http://spendmexkavya.ktree.org/oauth/token', [
+'form_params' => [
+    'grant_type' => 'password',
+    'client_id' => $client_id,
+    'client_secret' =>$client_secret,
+    'username' => 'xy@gmail.com',
+    'password' => 'ktree123',
+    'scope' => '',
+],
+'http_errors' => false // add this to return errors in json
+]);
+
+        $apiResponse=json_decode((string) $response->getBody(), true);
+
+        if (!empty($apiResponse['access_token'])) {
+          if (!Session::has('apiToken')) {
+                Session::put('apiToken', $apiResponse['access_token']);
+                Session::put('userEmail', $email);
+                Session::save();
+            }
+
+        //$message = Session::get('apiToken');
+        //echo $message;
+
+      return
+        redirect()->route(config('asgard.user.config.redirect_route_after_login'))
+              ->withSuccess(trans('user::messages.successfully logged in'));
+        } else {
+            return redirect()->back()->withInput()->withError('
+Invalid login or password.
+'); //hardcoding eng
+        }
+
+*/
+
+
         if (empty($credentials)) {
-            return null;
+            return;
         }
 
         $instance = $this->createModel();
 
         $loginNames = $instance->getLoginNames();
 
-        [$logins] = $this->parseCredentials($credentials, $loginNames);
+        list($logins, $password, $credentials) = $this->parseCredentials($credentials, $loginNames);
 
         if (empty($logins)) {
-            return null;
+            return;
         }
 
         $query = $instance->newQuery();
@@ -99,10 +156,8 @@ class IlluminateUserRepository implements UserRepositoryInterface
             }
         } else {
             $query->whereNested(function ($query) use ($loginNames, $logins) {
-                foreach ($loginNames as $index => $name) {
-                    $method = $index === 0 ? 'where' : 'orWhere';
-
-                    $query->{$method}($name, $logins);
+                foreach ($loginNames as $name) {
+                    $query->orWhere($name, $logins);
                 }
             });
         }
@@ -111,57 +166,56 @@ class IlluminateUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function findByPersistenceCode(string $code): ?UserInterface
+    public function findByPersistenceCode($code)
     {
         return $this->createModel()
             ->newQuery()
             ->whereHas('persistences', function ($q) use ($code) {
                 $q->where('code', $code);
             })
-            ->first()
-        ;
+            ->first();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function recordLogin(UserInterface $user): bool
+    public function recordLogin(UserInterface $user)
     {
-        $user->last_login = Carbon::now();
+        $user->lastLogin = Carbon::now();
 
-        return (bool) $user->save();
+        return $user->save() ? $user : false;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function recordLogout(UserInterface $user): bool
+    public function recordLogout(UserInterface $user)
     {
-        return (bool) $user->save();
+        return $user->save() ? $user : false;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function validateCredentials(UserInterface $user, array $credentials): bool
+    public function validateCredentials(UserInterface $user, array $credentials)
     {
         return $this->hasher->check($credentials['password'], $user->password);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function validForCreation(array $credentials): bool
+    public function validForCreation(array $credentials)
     {
         return $this->validateUser($credentials);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function validForUpdate($user, array $credentials): bool
+    public function validForUpdate($user, array $credentials)
     {
         if ($user instanceof UserInterface) {
             $user = $user->getUserId();
@@ -171,9 +225,9 @@ class IlluminateUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function create(array $credentials, Closure $callback = null): ?UserInterface
+    public function create(array $credentials, Closure $callback = null)
     {
         $user = $this->createModel();
 
@@ -185,7 +239,7 @@ class IlluminateUserRepository implements UserRepositoryInterface
             $result = $callback($user);
 
             if ($result === false) {
-                return null;
+                return false;
             }
         }
 
@@ -197,9 +251,9 @@ class IlluminateUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function update($user, array $credentials): UserInterface
+    public function update($user, array $credentials)
     {
         if (! $user instanceof UserInterface) {
             $user = $this->findById($user);
@@ -217,77 +271,14 @@ class IlluminateUserRepository implements UserRepositoryInterface
     }
 
     /**
-     * Fills a user with the given credentials, intelligently.
-     *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     * @param array                                   $credentials
-     *
-     * @return void
-     */
-    public function fill(UserInterface $user, array $credentials): void
-    {
-        $this->fireEvent('sentinel.user.filling', compact('user', 'credentials'));
-
-        $loginNames = $user->getLoginNames();
-
-        [$logins, $password, $attributes] = $this->parseCredentials($credentials, $loginNames);
-
-        if (is_array($logins)) {
-            $user->fill($logins);
-        } else {
-            $loginName = reset($loginNames);
-
-            $user->fill([
-                $loginName => $logins,
-            ]);
-        }
-
-        $user->fill($attributes);
-
-        if (isset($password)) {
-            $password = $this->hasher->hash($password);
-
-            $user->fill([
-                'password' => $password,
-            ]);
-        }
-
-        $this->fireEvent('sentinel.user.filled', compact('user', 'credentials'));
-    }
-
-    /**
-     * Returns the hasher instance.
-     *
-     * @return \Cartalyst\Sentinel\Hashing\HasherInterface
-     */
-    public function getHasher(): HasherInterface
-    {
-        return $this->hasher;
-    }
-
-    /**
-     * Sets the hasher instance.
-     *
-     * @param \Cartalyst\Sentinel\Hashing\HasherInterface $hasher
-     *
-     * @return void
-     */
-    public function setHasher(HasherInterface $hasher): void
-    {
-        $this->hasher = $hasher;
-    }
-
-    /**
      * Parses the given credentials to return logins, password and others.
      *
-     * @param array $credentials
-     * @param array $loginNames
-     *
-     * @throws \InvalidArgumentException
-     *
+     * @param  array  $credentials
+     * @param  array  $loginNames
      * @return array
+     * @throws \InvalidArgumentException
      */
-    protected function parseCredentials(array $credentials, array $loginNames): array
+    protected function parseCredentials(array $credentials, array $loginNames)
     {
         if (isset($credentials['password'])) {
             $password = $credentials['password'];
@@ -319,21 +310,19 @@ class IlluminateUserRepository implements UserRepositoryInterface
     /**
      * Validates the user.
      *
-     * @param array $credentials
-     * @param int   $id
-     *
-     * @throws \InvalidArgumentException
-     *
+     * @param  array  $credentials
+     * @param  int  $id
      * @return bool
+     * @throws \InvalidArgumentException
      */
-    protected function validateUser(array $credentials, int $id = null): bool
+    protected function validateUser(array $credentials, $id = null)
     {
         $instance = $this->createModel();
 
         $loginNames = $instance->getLoginNames();
 
         // We will simply parse credentials which checks logins and passwords
-        [$logins, $password] = $this->parseCredentials($credentials, $loginNames);
+        list($logins, $password, $credentials) = $this->parseCredentials($credentials, $loginNames);
 
         if ($id === null) {
             if (empty($logins)) {
@@ -346,5 +335,62 @@ class IlluminateUserRepository implements UserRepositoryInterface
         }
 
         return true;
+    }
+
+    /**
+     * Fills a user with the given credentials, intelligently.
+     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @param  array  $credentials
+     * @return void
+     */
+    public function fill(UserInterface $user, array $credentials)
+    {
+        $this->fireEvent('sentinel.user.filling', compact('user', 'credentials'));
+
+        $loginNames = $user->getLoginNames();
+
+        list($logins, $password, $attributes) = $this->parseCredentials($credentials, $loginNames);
+
+        if (is_array($logins)) {
+            $user->fill($logins);
+        } else {
+            $loginName = reset($loginNames);
+
+            $user->fill([
+                $loginName => $logins,
+            ]);
+        }
+
+        $user->fill($attributes);
+
+        if (isset($password)) {
+            $password = $this->hasher->hash($password);
+
+            $user->fill(compact('password'));
+        }
+
+        $this->fireEvent('sentinel.user.filled', compact('user', 'credentials'));
+    }
+
+    /**
+     * Returns the hasher instance.
+     *
+     * @return \Cartalyst\Sentinel\Hashing\HasherInterface
+     */
+    public function getHasher()
+    {
+        return $this->hasher;
+    }
+
+    /**
+     * Sets the hasher instance.
+     *
+     * @param \Cartalyst\Sentinel\Hashing\HasherInterface  $hasher
+     * @return void
+     */
+    public function setHasher(HasherInterface $hasher)
+    {
+        $this->hasher = $hasher;
     }
 }

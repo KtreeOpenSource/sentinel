@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,16 +11,14 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Roles;
-
-use IteratorAggregate;
 
 interface RoleInterface
 {
@@ -29,35 +27,34 @@ interface RoleInterface
      *
      * @return int
      */
-    public function getRoleId(): int;
+    public function getRoleId();
 
     /**
      * Returns the role's slug.
      *
      * @return string
      */
-    public function getRoleSlug(): string;
+    public function getRoleSlug();
 
     /**
      * Returns all users for the role.
      *
      * @return \IteratorAggregate
      */
-    public function getUsers(): IteratorAggregate;
+    public function getUsers();
 
     /**
      * Returns the users model.
      *
      * @return string
      */
-    public static function getUsersModel(): string;
+    public static function getUsersModel();
 
     /**
      * Sets the users model.
      *
-     * @param string $usersModel
-     *
+     * @param  string  $usersModel
      * @return void
      */
-    public static function setUsersModel(string $usersModel): void;
+    public static function setUsersModel($usersModel);
 }

@@ -20,16 +20,16 @@
 
 namespace Cartalyst\Sentinel\Sessions;
 
-use Illuminate\Session\Store as SessionStore;
+use CI_Session as Session;
 
-class IlluminateSession implements SessionInterface
+class CISession implements SessionInterface
 {
     /**
-     * The session store object.
+     * The CodeIgniter session driver.
      *
-     * @var \Illuminate\Session\Store
+     * @var \CI_Session
      */
-    protected $session;
+    protected $store;
 
     /**
      * The session key.
@@ -39,15 +39,15 @@ class IlluminateSession implements SessionInterface
     protected $key = 'cartalyst_sentinel';
 
     /**
-     * Create a new Illuminate Session driver.
+     * Create a new CodeIgniter Session driver.
      *
-     * @param  \Illuminate\Session\Store  $session
+     * @param  \CI_Session  $store
      * @param  string  $key
      * @return void
      */
-    public function __construct(SessionStore $session, $key = null)
+    public function __construct(Session $store, $key = null)
     {
-        $this->session = $session;
+        $this->store = $store;
 
         if (isset($key)) {
             $this->key = $key;
@@ -59,7 +59,7 @@ class IlluminateSession implements SessionInterface
      */
     public function put($value)
     {
-        $this->session->put($this->key, $value);
+        $this->store->set_userdata($this->key, serialize($value));
     }
 
     /**
@@ -67,7 +67,11 @@ class IlluminateSession implements SessionInterface
      */
     public function get()
     {
-        return $this->session->get($this->key);
+        $value = $this->store->userdata($this->key);
+
+        if ($value) {
+            return unserialize($value);
+        }
     }
 
     /**
@@ -75,6 +79,6 @@ class IlluminateSession implements SessionInterface
      */
     public function forget()
     {
-        $this->session->forget($this->key);
+        $this->store->unset_userdata($this->key);
     }
 }

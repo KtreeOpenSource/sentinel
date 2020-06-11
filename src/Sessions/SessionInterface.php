@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,11 +11,11 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Sessions;
@@ -25,11 +25,10 @@ interface SessionInterface
     /**
      * Put a value in the Sentinel session.
      *
-     * @param mixed $value
-     *
+     * @param  mixed  $value
      * @return void
      */
-    public function put($value): void;
+    public function put($value);
 
     /**
      * Returns the Sentinel session value.
@@ -43,5 +42,5 @@ interface SessionInterface
      *
      * @return void
      */
-    public function forget(): void;
+    public function forget();
 }

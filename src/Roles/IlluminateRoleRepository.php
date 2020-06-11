@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,11 +11,11 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Roles;
@@ -27,45 +27,57 @@ class IlluminateRoleRepository implements RoleRepositoryInterface
     use RepositoryTrait;
 
     /**
-     * The Eloquent role model FQCN.
+     * The Eloquent role model name.
      *
      * @var string
      */
-    protected $model = EloquentRole::class;
+    protected $model = 'Cartalyst\Sentinel\Roles\EloquentRole';
 
     /**
      * Create a new Illuminate role repository.
      *
-     * @param string $model
-     *
+     * @param  string  $model
      * @return void
      */
-    public function __construct(string $model = null)
+    public function __construct($model = null)
     {
-        $this->model = $model;
+        if (isset($model)) {
+            $this->model = $model;
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function findById(int $id): ?RoleInterface
+    public function findById($id)
     {
-        return $this->createModel()->newQuery()->find($id);
+        return $this
+            ->createModel()
+            ->newQuery()
+            ->find($id);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function findBySlug(string $slug): ?RoleInterface
+    public function findBySlug($slug)
     {
-        return $this->createModel()->newQuery()->where('slug', $slug)->first();
+        return $this
+            ->createModel()
+            ->newQuery()
+            ->where('slug', $slug)
+            ->first();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function findByName(string $name): ?RoleInterface
+    public function findByName($name)
     {
-        return $this->createModel()->newQuery()->where('name', $name)->first();
+        return $this
+            ->createModel()
+            ->newQuery()
+            ->where('name', $name)
+            ->first();
     }
 }

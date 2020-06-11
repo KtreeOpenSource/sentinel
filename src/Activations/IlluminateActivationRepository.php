@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,17 +11,16 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Activations;
 
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Cartalyst\Sentinel\Users\UserInterface;
 use Cartalyst\Support\Traits\RepositoryTrait;
 
@@ -30,11 +29,11 @@ class IlluminateActivationRepository implements ActivationRepositoryInterface
     use RepositoryTrait;
 
     /**
-     * The Activation model FQCN.
+     * The Eloquent activation model name.
      *
      * @var string
      */
-    protected $model = EloquentActivation::class;
+    protected $model = 'Cartalyst\Sentinel\Activations\EloquentActivation';
 
     /**
      * The activation expiration time, in seconds.
@@ -44,32 +43,33 @@ class IlluminateActivationRepository implements ActivationRepositoryInterface
     protected $expires = 259200;
 
     /**
-     * Constructor.
+     * Create a new Illuminate activation repository.
      *
-     * @param string $model
-     * @param int    $expires
-     *
+     * @param  string  $model
+     * @param  int  $expires
      * @return void
      */
-    public function __construct(string $model, int $expires)
+    public function __construct($model = null, $expires = null)
     {
-        $this->model = $model;
+        if (isset($model)) {
+            $this->model = $model;
+        }
 
-        $this->expires = $expires;
+        if (isset($expires)) {
+            $this->expires = $expires;
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function create(UserInterface $user): ActivationInterface
+    public function create(UserInterface $user)
     {
         $activation = $this->createModel();
 
         $code = $this->generateActivationCode();
 
-        $activation->fill([
-            'code' => $code,
-        ]);
+        $activation->fill(compact('code'));
 
         $activation->user_id = $user->getUserId();
 
@@ -79,37 +79,30 @@ class IlluminateActivationRepository implements ActivationRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function get(UserInterface $user, string $code = null): ?ActivationInterface
+    public function exists(UserInterface $user, $code = null)
     {
         $expires = $this->expires();
 
-        return $this
+        $activation = $this
             ->createModel()
             ->newQuery()
             ->where('user_id', $user->getUserId())
             ->where('completed', false)
-            ->where('created_at', '>', $expires)
-            ->when($code, function ($query, $code) {
-                return $query->where('code', $code);
-            })
-            ->first()
-        ;
+            ->where('createdAt', '>', $expires);
+
+        if ($code) {
+            $activation->where('code', $code);
+        }
+
+        return $activation->first() ?: false;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function exists(UserInterface $user, string $code = null): bool
-    {
-        return (bool) $this->get($user, $code);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function complete(UserInterface $user, string $code): bool
+    public function complete(UserInterface $user, $code)
     {
         $expires = $this->expires();
 
@@ -119,11 +112,10 @@ class IlluminateActivationRepository implements ActivationRepositoryInterface
             ->where('user_id', $user->getUserId())
             ->where('code', $code)
             ->where('completed', false)
-            ->where('created_at', '>', $expires)
-            ->first()
-        ;
+            ->where('createdAt', '>', $expires)
+            ->first();
 
-        if (! $activation) {
+        if ($activation === null) {
             return false;
         }
 
@@ -138,25 +130,28 @@ class IlluminateActivationRepository implements ActivationRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function completed(UserInterface $user): bool
+    public function completed(UserInterface $user)
     {
-        $userId = $user->getUserId();
+        $activation = $this
+            ->createModel()
+            ->newQuery()
+            ->where('user_id', $user->getUserId())
+            ->where('completed', true)
+            ->first();
 
-        return $this->createModel()->newQuery()->where('user_id', $userId)->where('completed', true)->exists();
+        return $activation ?: false;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function remove(UserInterface $user): bool
+    public function remove(UserInterface $user)
     {
-        $userId = $user->getUserId();
+        $activation = $this->completed($user);
 
-        $activation = $this->createModel()->newQuery()->where('user_id', $userId)->where('completed', true)->first();
-
-        if (! $activation) {
+        if ($activation === false) {
             return false;
         }
 
@@ -164,13 +159,18 @@ class IlluminateActivationRepository implements ActivationRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function removeExpired(): bool
+    public function removeExpired()
     {
         $expires = $this->expires();
 
-        return $this->createModel()->newQuery()->where('completed', false)->where('created_at', '<', $expires)->delete();
+        return $this
+            ->createModel()
+            ->newQuery()
+            ->where('completed', false)
+            ->where('createdAt', '<', $expires)
+            ->delete();
     }
 
     /**
@@ -178,18 +178,18 @@ class IlluminateActivationRepository implements ActivationRepositoryInterface
      *
      * @return \Carbon\Carbon
      */
-    protected function expires(): Carbon
+    protected function expires()
     {
         return Carbon::now()->subSeconds($this->expires);
     }
 
     /**
-     * Returns the random string used for the activation code.
+     * Return a random string for an activation code.
      *
      * @return string
      */
-    protected function generateActivationCode(): string
+    protected function generateActivationCode()
     {
-        return Str::random(32);
+        return str_random(32);
     }
 }

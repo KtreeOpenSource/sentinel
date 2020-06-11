@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,17 +11,17 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Checkpoints;
 
-use RuntimeException;
 use Cartalyst\Sentinel\Users\UserInterface;
+use RuntimeException;
 
 class NotActivatedException extends RuntimeException
 {
@@ -37,7 +37,7 @@ class NotActivatedException extends RuntimeException
      *
      * @return \Cartalyst\Sentinel\Users\UserInterface
      */
-    public function getUser(): UserInterface
+    public function getUser()
     {
         return $this->user;
     }
@@ -46,10 +46,9 @@ class NotActivatedException extends RuntimeException
      * Sets the user associated with Sentinel (does not log in).
      *
      * @param  \Cartalyst\Sentinel\Users\UserInterface
-     *
      * @return void
      */
-    public function setUser(UserInterface $user): void
+    public function setUser(UserInterface $user)
     {
         $this->user = $user;
     }

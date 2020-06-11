@@ -18,37 +18,27 @@
  * @link       http://cartalyst.com
  */
 
-namespace Cartalyst\Sentinel\Sessions;
+namespace Cartalyst\Sentinel\Cookies;
 
-use Illuminate\Session\Store as SessionStore;
+use Fuel\Core\Cookie;
 
-class IlluminateSession implements SessionInterface
+class FuelPHPCookie implements CookieInterface
 {
     /**
-     * The session store object.
-     *
-     * @var \Illuminate\Session\Store
-     */
-    protected $session;
-
-    /**
-     * The session key.
+     * The cookie key.
      *
      * @var string
      */
     protected $key = 'cartalyst_sentinel';
 
     /**
-     * Create a new Illuminate Session driver.
+     * Create a new FuelPHP cookie driver.
      *
-     * @param  \Illuminate\Session\Store  $session
      * @param  string  $key
      * @return void
      */
-    public function __construct(SessionStore $session, $key = null)
+    public function __construct($key = null)
     {
-        $this->session = $session;
-
         if (isset($key)) {
             $this->key = $key;
         }
@@ -59,7 +49,7 @@ class IlluminateSession implements SessionInterface
      */
     public function put($value)
     {
-        $this->session->put($this->key, $value);
+        Cookie::set($this->key, json_encode($value), 2628000);
     }
 
     /**
@@ -67,7 +57,11 @@ class IlluminateSession implements SessionInterface
      */
     public function get()
     {
-        return $this->session->get($this->key);
+        $value = Cookie::get($this->key);
+
+        if ($value) {
+            return json_decode($value);
+        }
     }
 
     /**
@@ -75,6 +69,6 @@ class IlluminateSession implements SessionInterface
      */
     public function forget()
     {
-        $this->session->forget($this->key);
+        Cookie::delete($this->key);
     }
 }

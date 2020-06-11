@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,34 +11,33 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Checkpoints;
 
-use Cartalyst\Sentinel\Users\UserInterface;
 use Cartalyst\Sentinel\Activations\ActivationRepositoryInterface;
+use Cartalyst\Sentinel\Users\UserInterface;
 
 class ActivationCheckpoint implements CheckpointInterface
 {
     use AuthenticatedCheckpoint;
 
     /**
-     * The Activations repository instance.
+     * The activation repository.
      *
      * @var \Cartalyst\Sentinel\Activations\ActivationRepositoryInterface
      */
     protected $activations;
 
     /**
-     * Constructor.
+     * Create a new activation checkpoint.
      *
-     * @param \Cartalyst\Sentinel\Activations\ActivationRepositoryInterface $activations
-     *
+     * @param  \Cartalyst\Sentinel\Activations\ActivationRepositoryInterface  $activations
      * @return void
      */
     public function __construct(ActivationRepositoryInterface $activations)
@@ -47,17 +46,17 @@ class ActivationCheckpoint implements CheckpointInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function login(UserInterface $user): bool
+    public function login(UserInterface $user)
     {
         return $this->checkActivation($user);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function check(UserInterface $user): bool
+    public function check(UserInterface $user)
     {
         return $this->checkActivation($user);
     }
@@ -65,13 +64,11 @@ class ActivationCheckpoint implements CheckpointInterface
     /**
      * Checks the activation status of the given user.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     *
-     * @throws \Cartalyst\Sentinel\Checkpoints\NotActivatedException
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
      * @return bool
+     * @throws \Cartalyst\Sentinel\Checkpoints\NotActivatedException
      */
-    protected function checkActivation(UserInterface $user): bool
+    protected function checkActivation(UserInterface $user)
     {
         $completed = $this->activations->completed($user);
 
@@ -82,7 +79,5 @@ class ActivationCheckpoint implements CheckpointInterface
 
             throw $exception;
         }
-
-        return true;
     }
 }

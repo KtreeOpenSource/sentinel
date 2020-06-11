@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,16 +11,15 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class MigrationCartalystSentinel extends Migration
 {
@@ -100,8 +99,8 @@ class MigrationCartalystSentinel extends Migration
             $table->string('password');
             $table->text('permissions')->nullable();
             $table->timestamp('last_login')->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
+            $table->string('firstName')->nullable();
+            $table->string('lastName')->nullable();
             $table->timestamps();
 
             $table->engine = 'InnoDB';

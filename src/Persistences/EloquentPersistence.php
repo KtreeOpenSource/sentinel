@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,61 +11,66 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Persistences;
 
 use Illuminate\Database\Eloquent\Model;
-use Cartalyst\Sentinel\Users\EloquentUser;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\ApiModel;
 
-class EloquentPersistence extends Model implements PersistenceInterface
+class EloquentPersistence extends ApiModel implements PersistenceInterface
 {
     /**
-     * The table associated with the model.
+     * {@inheritDoc}
+     */
+    protected $table = 'user__persistences';
+
+    /**
+     * {@inheritDoc}
+     */
+    protected $fillable = [
+        'user_id',
+        'corporate_user_id',
+        'code',
+    ];
+
+    /**
+     * The users model name.
      *
      * @var string
      */
-    protected $table = 'persistences';
+    protected static $usersModel = 'Cartalyst\Sentinel\Users\EloquentUser';
 
     /**
-     * The Users model FQCN.
-     *
-     * @var string
+     * {@inheritDoc}
      */
-    protected static $usersModel = EloquentUser::class;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(static::$usersModel);
     }
 
     /**
-     * Get the Users model FQCN.
+     * Get the users model.
      *
      * @return string
      */
-    public static function getUsersModel(): string
+    public static function getUsersModel()
     {
         return static::$usersModel;
     }
 
     /**
-     * Set the Users model FQCN.
+     * Set the users model.
      *
-     * @param string $usersModel
-     *
+     * @param  string  $usersModel
      * @return void
      */
-    public static function setUsersModel(string $usersModel): void
+    public static function setUsersModel($usersModel)
     {
         static::$usersModel = $usersModel;
     }

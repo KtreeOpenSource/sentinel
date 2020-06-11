@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * Part of the Sentinel package.
  *
  * NOTICE OF LICENSE
@@ -11,11 +11,11 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    4.0.0
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2020, Cartalyst LLC
- * @link       https://cartalyst.com
+ * @copyright  (c) 2011-2017, Cartalyst LLC
+ * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Reminders;
@@ -27,47 +27,34 @@ interface ReminderRepositoryInterface
     /**
      * Create a new reminder record and code.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @return string
      */
     public function create(UserInterface $user);
 
     /**
-     * Gets the reminder for the given user.
-     *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     * @param string|null                             $code
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
-    public function get(UserInterface $user, string $code = null);
-
-    /**
      * Check if a valid reminder exists.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     * @param string|null                             $code
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @param  string  $code
      * @return bool
      */
-    public function exists(UserInterface $user, string $code = null): bool;
+    public function exists(UserInterface $user, $code = null);
 
     /**
      * Complete reminder for the given user.
      *
-     * @param \Cartalyst\Sentinel\Users\UserInterface $user
-     * @param string                                  $code
-     * @param string                                  $password
-     *
+     * @param  \Cartalyst\Sentinel\Users\UserInterface  $user
+     * @param  string  $code
+     * @param  string  $password
      * @return bool
      */
-    public function complete(UserInterface $user, string $code, string $password): bool;
+    public function complete(UserInterface $user, $code, $password);
 
     /**
      * Remove expired reminder codes.
      *
-     * @return bool
+     * @return int
      */
-    public function removeExpired(): bool;
+    public function removeExpired();
 }
