@@ -11,18 +11,19 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    2.0.18
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2019, Cartalyst LLC
+ * @copyright  (c) 2011-2017, Cartalyst LLC
  * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Throttling;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ApiModel;
 
-class EloquentThrottle extends Model
+class EloquentThrottle extends ApiModel
 {
     /**
      * {@inheritDoc}

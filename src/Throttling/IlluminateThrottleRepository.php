@@ -11,10 +11,10 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    2.0.18
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2019, Cartalyst LLC
+ * @copyright  (c) 2011-2017, Cartalyst LLC
  * @link       http://cartalyst.com
  */
 
@@ -362,11 +362,11 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
                     continue;
                 }
 
-                if ($last->created_at->diffInSeconds() < $delay) {
+                if ($last->createdAt->diffInSeconds() < $delay) {
                     return $this->secondsToFree($last, $delay);
                 }
             }
-        } elseif ($throttles->count() >= $this->$thresholds) {
+        } elseif ($throttles->count() > $this->$thresholds) {
             $interval = $type.'Interval';
 
             $first = $throttles->first();
@@ -404,7 +404,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
         return $this->createModel()
             ->newQuery()
             ->where('type', 'global')
-            ->where('created_at', '>', $interval)
+            ->where('createdAt', '>', $interval)
             ->get();
     }
 
@@ -439,7 +439,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
             ->newQuery()
             ->where('type', 'ip')
             ->where('ip', $ipAddress)
-            ->where('created_at', '>', $interval)
+            ->where('createdAt', '>', $interval)
             ->get();
     }
 
@@ -476,7 +476,7 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
             ->newQuery()
             ->where('type', 'user')
             ->where('user_id', $user->getUserId())
-            ->where('created_at', '>', $interval)
+            ->where('createdAt', '>', $interval)
             ->get();
     }
 
@@ -490,6 +490,6 @@ class IlluminateThrottleRepository implements ThrottleRepositoryInterface
      */
     protected function secondsToFree(EloquentThrottle $throttle, $interval)
     {
-        return $throttle->created_at->addSeconds($interval)->diffInSeconds();
+        return $throttle->createdAt->addSeconds($interval)->diffInSeconds();
     }
 }

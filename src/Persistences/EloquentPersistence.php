@@ -11,23 +11,33 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    2.0.18
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2019, Cartalyst LLC
+ * @copyright  (c) 2011-2017, Cartalyst LLC
  * @link       http://cartalyst.com
  */
 
 namespace Cartalyst\Sentinel\Persistences;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ApiModel;
 
-class EloquentPersistence extends Model implements PersistenceInterface
+class EloquentPersistence extends ApiModel implements PersistenceInterface
 {
     /**
      * {@inheritDoc}
      */
-    protected $table = 'persistences';
+    protected $table = 'user__persistences';
+
+    /**
+     * {@inheritDoc}
+     */
+    protected $fillable = [
+        'user_id',
+        'corporate_user_id',
+        'code',
+    ];
 
     /**
      * The users model name.

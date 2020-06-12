@@ -11,10 +11,10 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    2.0.18
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2019, Cartalyst LLC
+ * @copyright  (c) 2011-2017, Cartalyst LLC
  * @link       http://cartalyst.com
  */
 
@@ -99,8 +99,8 @@ class MigrationCartalystSentinel extends Migration
             $table->string('password');
             $table->text('permissions')->nullable();
             $table->timestamp('last_login')->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
+            $table->string('firstName')->nullable();
+            $table->string('lastName')->nullable();
             $table->timestamps();
 
             $table->engine = 'InnoDB';

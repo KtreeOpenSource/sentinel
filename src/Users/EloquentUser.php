@@ -11,10 +11,10 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    2.0.18
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2019, Cartalyst LLC
+ * @copyright  (c) 2011-2017, Cartalyst LLC
  * @link       http://cartalyst.com
  */
 
@@ -26,8 +26,9 @@ use Cartalyst\Sentinel\Persistences\PersistableInterface;
 use Cartalyst\Sentinel\Roles\RoleableInterface;
 use Cartalyst\Sentinel\Roles\RoleInterface;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ApiModel;
 
-class EloquentUser extends Model implements RoleableInterface, PermissibleInterface, PersistableInterface, UserInterface
+class EloquentUser extends ApiModel implements RoleableInterface, PermissibleInterface, PersistableInterface, UserInterface
 {
     use PermissibleTrait;
 
@@ -42,8 +43,8 @@ class EloquentUser extends Model implements RoleableInterface, PermissibleInterf
     protected $fillable = [
         'email',
         'password',
-        'last_name',
-        'first_name',
+        'lastName',
+        'firstName',
         'permissions',
     ];
 
@@ -410,9 +411,7 @@ class EloquentUser extends Model implements RoleableInterface, PermissibleInterf
      */
     public function delete()
     {
-        $isSoftDeletable = property_exists($this, 'forceDeleting');
-
-        $isSoftDeleted = $isSoftDeletable && ! $this->forceDeleting;
+        $isSoftDeleted = array_key_exists('Illuminate\Database\Eloquent\SoftDeletes', class_uses($this));
 
         if ($this->exists && ! $isSoftDeleted) {
             $this->activations()->delete();

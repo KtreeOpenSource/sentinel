@@ -11,10 +11,10 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    2.0.18
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2019, Cartalyst LLC
+ * @copyright  (c) 2011-2017, Cartalyst LLC
  * @link       http://cartalyst.com
  */
 
@@ -104,7 +104,7 @@ class IlluminateReminderRepository implements ReminderRepositoryInterface
             ->newQuery()
             ->where('user_id', $user->getUserId())
             ->where('completed', false)
-            ->where('created_at', '>', $expires);
+            ->where('createdAt', '>', $expires);
 
         if ($code) {
             $reminder->where('code', $code);
@@ -126,7 +126,7 @@ class IlluminateReminderRepository implements ReminderRepositoryInterface
             ->where('user_id', $user->getUserId())
             ->where('code', $code)
             ->where('completed', false)
-            ->where('created_at', '>', $expires)
+            ->where('createdAt', '>', $expires)
             ->first();
 
         if ($reminder === null) {
@@ -164,7 +164,7 @@ class IlluminateReminderRepository implements ReminderRepositoryInterface
             ->createModel()
             ->newQuery()
             ->where('completed', false)
-            ->where('created_at', '<', $expires)
+            ->where('createdAt', '<', $expires)
             ->delete();
     }
 

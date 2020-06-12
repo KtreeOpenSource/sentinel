@@ -11,10 +11,10 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    2.0.18
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2019, Cartalyst LLC
+ * @copyright  (c) 2011-2017, Cartalyst LLC
  * @link       http://cartalyst.com
  */
 
@@ -83,7 +83,57 @@ class IlluminateUserRepository implements UserRepositoryInterface
      * {@inheritDoc}
      */
     public function findByCredentials(array $credentials)
-    {
+    { /*$credentials = [
+        'email' => $request->email,
+        'password' => $request->password,
+    ];*/
+
+    /*
+    $email= $request->email;
+    $password = $request->password;
+    */
+/*
+    $client_id=config('asgard.user.config.passport_client_id');
+        $client_secret=config('asgard.user.config.client_secret');
+        //$remember = (bool) $request->get('remember_me', false);
+        $http = new \GuzzleHttp\Client;
+
+        $response = $http->post('http://spendmexkavya.ktree.org/oauth/token', [
+'form_params' => [
+    'grant_type' => 'password',
+    'client_id' => $client_id,
+    'client_secret' =>$client_secret,
+    'username' => 'xy@gmail.com',
+    'password' => 'ktree123',
+    'scope' => '',
+],
+'http_errors' => false // add this to return errors in json
+]);
+
+        $apiResponse=json_decode((string) $response->getBody(), true);
+
+        if (!empty($apiResponse['access_token'])) {
+          if (!Session::has('apiToken')) {
+                Session::put('apiToken', $apiResponse['access_token']);
+                Session::put('userEmail', $email);
+                Session::save();
+            }
+
+        //$message = Session::get('apiToken');
+        //echo $message;
+
+      return
+        redirect()->route(config('asgard.user.config.redirect_route_after_login'))
+              ->withSuccess(trans('user::messages.successfully logged in'));
+        } else {
+            return redirect()->back()->withInput()->withError('
+Invalid login or password.
+'); //hardcoding eng
+        }
+
+*/
+
+
         if (empty($credentials)) {
             return;
         }
@@ -106,10 +156,8 @@ class IlluminateUserRepository implements UserRepositoryInterface
             }
         } else {
             $query->whereNested(function ($query) use ($loginNames, $logins) {
-                foreach ($loginNames as $index => $name) {
-                    $method = $index === 0 ? 'where' : 'orWhere';
-
-                    $query->{$method}($name, $logins);
+                foreach ($loginNames as $name) {
+                    $query->orWhere($name, $logins);
                 }
             });
         }
@@ -135,7 +183,7 @@ class IlluminateUserRepository implements UserRepositoryInterface
      */
     public function recordLogin(UserInterface $user)
     {
-        $user->last_login = Carbon::now();
+        $user->lastLogin = Carbon::now();
 
         return $user->save() ? $user : false;
     }

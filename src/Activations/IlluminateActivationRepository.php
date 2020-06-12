@@ -11,10 +11,10 @@
  * bundled with this package in the LICENSE file.
  *
  * @package    Sentinel
- * @version    2.0.18
+ * @version    2.0.16
  * @author     Cartalyst LLC
  * @license    BSD License (3-clause)
- * @copyright  (c) 2011-2019, Cartalyst LLC
+ * @copyright  (c) 2011-2017, Cartalyst LLC
  * @link       http://cartalyst.com
  */
 
@@ -90,7 +90,7 @@ class IlluminateActivationRepository implements ActivationRepositoryInterface
             ->newQuery()
             ->where('user_id', $user->getUserId())
             ->where('completed', false)
-            ->where('created_at', '>', $expires);
+            ->where('createdAt', '>', $expires);
 
         if ($code) {
             $activation->where('code', $code);
@@ -112,7 +112,7 @@ class IlluminateActivationRepository implements ActivationRepositoryInterface
             ->where('user_id', $user->getUserId())
             ->where('code', $code)
             ->where('completed', false)
-            ->where('created_at', '>', $expires)
+            ->where('createdAt', '>', $expires)
             ->first();
 
         if ($activation === null) {
@@ -169,7 +169,7 @@ class IlluminateActivationRepository implements ActivationRepositoryInterface
             ->createModel()
             ->newQuery()
             ->where('completed', false)
-            ->where('created_at', '<', $expires)
+            ->where('createdAt', '<', $expires)
             ->delete();
     }
 
