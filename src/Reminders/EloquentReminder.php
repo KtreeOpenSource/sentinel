@@ -21,14 +21,17 @@
 namespace Cartalyst\Sentinel\Reminders;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ApiModel;
 
-class EloquentReminder extends ApiModel
+class EloquentReminder extends Model
 {
+
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'updatedAt';
+
     /**
      * {@inheritDoc}
      */
-    protected $table = 'reminders';
+    protected $table = 'user__reminders';
 
     /**
      * {@inheritDoc}

@@ -23,16 +23,18 @@ namespace Cartalyst\Sentinel\Roles;
 use Cartalyst\Sentinel\Permissions\PermissibleInterface;
 use Cartalyst\Sentinel\Permissions\PermissibleTrait;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ApiModel;
 
-class EloquentRole extends ApiModel implements RoleInterface, PermissibleInterface
+class EloquentRole extends Model implements RoleInterface, PermissibleInterface
 {
     use PermissibleTrait;
+
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'updatedAt';
 
     /**
      * {@inheritDoc}
      */
-    protected $table = 'roles';
+    protected $table = 'user__roles';
 
     /**
      * {@inheritDoc}
@@ -71,7 +73,7 @@ class EloquentRole extends ApiModel implements RoleInterface, PermissibleInterfa
      */
     public function users()
     {
-        return $this->belongsToMany(static::$usersModel, 'role_users', 'role_id', 'user_id')->withTimestamps();
+        return $this->belongsToMany(static::$usersModel, 'user__role_users', 'role_id', 'user_id')->withTimestamps();
     }
 
     /**

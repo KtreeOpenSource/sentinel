@@ -26,16 +26,18 @@ use Cartalyst\Sentinel\Persistences\PersistableInterface;
 use Cartalyst\Sentinel\Roles\RoleableInterface;
 use Cartalyst\Sentinel\Roles\RoleInterface;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ApiModel;
 
-class EloquentUser extends ApiModel implements RoleableInterface, PermissibleInterface, PersistableInterface, UserInterface
+class EloquentUser extends Model implements RoleableInterface, PermissibleInterface, PersistableInterface, UserInterface
 {
     use PermissibleTrait;
 
     /**
      * {@inheritDoc}
      */
-    protected $table = 'users';
+    protected $table = 'user__users';
+
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'updatedAt';
 
     /**
      * {@inheritDoc}
@@ -124,7 +126,7 @@ class EloquentUser extends ApiModel implements RoleableInterface, PermissibleInt
      */
     public function roles()
     {
-        return $this->belongsToMany(static::$rolesModel, 'role_users', 'user_id', 'role_id')->withTimestamps();
+        return $this->belongsToMany(static::$rolesModel, 'user__role_users', 'user_id', 'role_id')->withTimestamps();
     }
 
     /**

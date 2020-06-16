@@ -21,14 +21,13 @@
 namespace Cartalyst\Sentinel\Activations;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ApiModel;
 
-class EloquentActivation extends ApiModel implements ActivationInterface
+class EloquentActivation extends Model implements ActivationInterface
 {
     /**
      * {@inheritDoc}
      */
-    protected $table = 'activations';
+    protected $table = 'user__activations';
 
     /**
      * {@inheritDoc}
@@ -38,6 +37,9 @@ class EloquentActivation extends ApiModel implements ActivationInterface
         'completed',
         'completed_at',
     ];
+
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'updatedAt';
 
     /**
      * Get mutator for the "completed" attribute.

@@ -21,10 +21,12 @@
 namespace Cartalyst\Sentinel\Persistences;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ApiModel;
 
-class EloquentPersistence extends ApiModel implements PersistenceInterface
+class EloquentPersistence extends Model implements PersistenceInterface
 {
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'updatedAt';
+
     /**
      * {@inheritDoc}
      */

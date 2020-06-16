@@ -245,7 +245,6 @@ class Sentinel
             return false;
         }
 
-
         if (! $user = $this->persistences->findUserByPersistenceCode($code)) {
             return false;
         }
@@ -290,6 +289,7 @@ class Sentinel
     public function authenticate($credentials, $remember = false, $login = true)
     {
         $response = $this->fireEvent('sentinel.authenticating', $credentials, true);
+
         if ($response === false) {
             return false;
         }
@@ -297,7 +297,6 @@ class Sentinel
         if ($credentials instanceof UserInterface) {
             $user = $credentials;
         } else {
-
             $user = $this->users->findByCredentials($credentials);
 
             $valid = $user !== null ? $this->users->validateCredentials($user, $credentials) : false;
@@ -308,7 +307,6 @@ class Sentinel
                 return false;
             }
         }
-
 
         if (! $this->cycleCheckpoints('login', $user)) {
             return false;
@@ -522,11 +520,13 @@ class Sentinel
     public function logout(UserInterface $user = null, $everywhere = false)
     {
         $currentUser = $this->check();
+
         if ($user && $user !== $currentUser) {
             $this->persistences->flush($user, false);
 
             return true;
         }
+
         $user = $user ?: $currentUser;
 
         if ($user === false) {
@@ -534,8 +534,11 @@ class Sentinel
         }
 
         $method = $everywhere === true ? 'flush' : 'forget';
+
         $this->persistences->{$method}($user);
+
         $this->user = null;
+
         return $this->users->recordLogout($user);
     }
 

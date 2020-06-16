@@ -21,14 +21,16 @@
 namespace Cartalyst\Sentinel\Throttling;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ApiModel;
 
-class EloquentThrottle extends ApiModel
+class EloquentThrottle extends Model
 {
     /**
      * {@inheritDoc}
      */
-    protected $table = 'throttle';
+    protected $table = 'user__throttle';
+
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'updatedAt';
 
     /**
      * {@inheritDoc}

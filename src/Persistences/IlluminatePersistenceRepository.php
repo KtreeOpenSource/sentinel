@@ -170,7 +170,7 @@ class IlluminatePersistenceRepository implements PersistenceRepositoryInterface
 
         $this->session->forget();
         $this->cookie->forget();
-       
+
         return $this->remove($code);
     }
 
